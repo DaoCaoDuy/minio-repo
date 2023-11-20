@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: minio
+  namespace: persistent
+spec:
+  serviceName: "minio-service"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: minio
+  template:
+    metadata:
+      labels:
+        app: minio
+    spec:
+      containers:
+        - name: minio
+          image: quay.io/minio/minio:latest
+          command:
+            - /bin/bash
+            - -c
+          args: 
+            - minio server /data --console-address :9090
+          env:
+            - name: MINIO_ROOT_USER
+              value: "minio"
+            - name: MINIO_ROOT_PASSWORD
+              value: "123456a@"
+          volumeMounts:
+            - name: minio-data 
+              mountPath: k8s/persistent-volumes/minio
+      nodeSelector:
+        kubernetes.io/hostname: k8s-worker
+      volumes:
+        - name: minio-data
+          persistentVolumeClaim:
+            claimName: minio-data-pvc
