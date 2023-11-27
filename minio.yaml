@@ -21,7 +21,7 @@ spec:
             - /bin/bash
             - -c
           args: 
-            - minio server /data --console-address :9090
+            - minio server /data --console-address :9091
           env:
             - name: MINIO_ROOT_USER
               value: "minio"
